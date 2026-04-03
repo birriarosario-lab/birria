@@ -1,4 +1,4 @@
-// BIRRIA PRO MAX FINAL
+// BIRRIA PRO MAX FINALconst [isAdmin, setIsAdmin] = useState(false);
 // React + Tailwind + Supabase + Cloudinary + Tickets
 
 import { useState, useEffect } from "react";
@@ -15,10 +15,39 @@ export default function App() {
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    loadEvents();
-  }, []);
+  loadEvents();
+
+  if (window.location.pathname === "/admin") {
+    setIsAdmin(true);
+  }
+}, []);
 
   // 📥 CARGAR EVENTOS
+  {isAdmin && (
+  <div className="flex gap-2 mt-2">
+    <button
+      onClick={() => editEvent(ev)}
+      className="bg-blue-500 px-2 py-1 rounded"
+    >
+      Editar
+    </button>
+
+    <button
+      onClick={() => deleteEvent(ev.id)}
+      className="bg-red-500 px-2 py-1 rounded"
+    >
+      Borrar
+    </button>
+  </div>
+)}
+const deleteEvent = async (id) => {
+  await supabase.from("events").delete().eq("id", id);
+  loadEvents();
+};
+const deleteEvent = async (id) => {
+  await supabase.from("events").delete().eq("id", id);
+  loadEvents();
+};
   const loadEvents = async () => {
     const { data } = await supabase.from("events").select("*").order("id", { ascending: false });
     setEvents(data || []);
