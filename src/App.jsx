@@ -15,13 +15,11 @@ export default function App() {
   useEffect(() => {
     loadEvents();
 
-    // 🔐 activar admin con ?admin
     if (window.location.search.includes("admin")) {
       setIsAdmin(true);
     }
   }, []);
 
-  // 📥 cargar eventos
   const loadEvents = async () => {
     const { data } = await supabase
       .from("events")
@@ -31,7 +29,6 @@ export default function App() {
     setEvents(data || []);
   };
 
-  // 📤 subir flyers
   const handleDrop = async (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
@@ -42,7 +39,7 @@ export default function App() {
       formData.append("upload_preset", "birria_unsigned");
 
       const res = await fetch(
-        "https://api.cloudinary.com/v1_1/dbfwgk9jq/image/upload",
+        "https://api.cloudinary.com/v1_1/dbfwgk9jq/video/upload",
         {
           method: "POST",
           body: formData,
@@ -64,13 +61,11 @@ export default function App() {
     loadEvents();
   };
 
-  // 🗑 borrar evento
   const deleteEvent = async (id) => {
     await supabase.from("events").delete().eq("id", id);
     loadEvents();
   };
 
-  // 💰 link de pago
   const createPaymentLink = () => {
     return "https://link.mercadopago.com.ar/ticketsbirria";
   };
@@ -78,27 +73,39 @@ export default function App() {
   return (
     <div className="min-h-screen bg-black text-white">
 
-      {/* HERO */}
-      <section className="h-[60vh] flex flex-col items-center justify-center gap-6">
-        <h1 className="text-7xl neon-text">BIRRIA</h1>
+      {/* 🎥 HERO CON VIDEO */}
+      <div className="relative h-screen w-full overflow-hidden">
 
-        <div
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDrop}
-          className="border-2 border-dashed border-pink-500 p-10 text-center rounded-xl"
+        <video
+          autoPlay
+          loop
+          muted
+          className="absolute w-full h-full object-cover opacity-40"
         >
-          Arrastrá flyers acá 🔥
+          <source src="https://res.cloudinary.com/demo/video/upload/v1620000000/nightclub.mp4" type="video/mp4" />
+        </video>
+
+        <div className="relative z-10 flex flex-col items-center justify-center h-full gap-6">
+          <h1 className="text-7xl neon-text animate-pulse">BIRRIA</h1>
+
+          <div
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
+            className="border-2 border-pink-500 p-10 text-center rounded-xl backdrop-blur-lg"
+          >
+            Arrastrá flyers acá 🔥
+          </div>
         </div>
-      </section>
+      </div>
 
       {/* EVENTS */}
       <section className="p-10 grid grid-cols-2 md:grid-cols-4 gap-6">
         {events.map((ev) => (
           <div
-  key={ev.id}
-  onClick={() => setSelected(ev)}
-  className="cursor-pointer"
->
+            key={ev.id}
+            onClick={() => setSelected(ev)}
+            className="cursor-pointer transform hover:scale-110 transition duration-300"
+          >
             <img src={ev.image} className="rounded-xl mb-2" />
             <p className="font-bold">{ev.title}</p>
             <p className="text-sm text-zinc-400">{ev.date}</p>
@@ -124,7 +131,7 @@ export default function App() {
         ))}
       </section>
 
-      {/* MODAL EVENTO */}
+      {/* MODAL */}
       {selected && (
         <div
           className="fixed inset-0 bg-black/80 flex items-center justify-center"
@@ -159,7 +166,7 @@ export default function App() {
         </div>
       )}
 
-      {/* 🧠 PANEL EDITOR PRO */}
+      {/* EDITOR */}
       {editingEvent && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
           <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-md">
@@ -218,10 +225,14 @@ export default function App() {
         </div>
       )}
 
-      {/* NEON */}
       <style>{`
         .neon-text {
-          text-shadow: 0 0 10px #ff00ff, 0 0 30px #ff00ff;
+          color: #fff;
+          text-shadow:
+            0 0 5px #ff00ff,
+            0 0 10px #ff00ff,
+            0 0 20px #ff00ff,
+            0 0 40px #ff00ff;
         }
       `}</style>
     </div>
