@@ -94,7 +94,11 @@ export default function App() {
       {/* EVENTS */}
       <section className="p-10 grid grid-cols-2 md:grid-cols-4 gap-6">
         {events.map((ev) => (
-          <div key={ev.id} className="cursor-pointer">
+          <div
+  key={ev.id}
+  onClick={() => setSelected(ev)}
+  className="cursor-pointer"
+>
             <img src={ev.image} className="rounded-xl mb-2" />
             <p className="font-bold">{ev.title}</p>
             <p className="text-sm text-zinc-400">{ev.date}</p>
