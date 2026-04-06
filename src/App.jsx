@@ -39,7 +39,7 @@ export default function App() {
       formData.append("upload_preset", "birria_unsigned");
 
       const res = await fetch(
-        "https://api.cloudinary.com/v1_1/dbfwgk9jq/video/upload",
+        "https://api.cloudinary.com/v1_1/dbfwgk9jq/image/upload",
         {
           method: "POST",
           body: formData,
@@ -76,6 +76,7 @@ export default function App() {
       {/* 🎥 HERO CON VIDEO */}
       <div className="relative h-screen w-full overflow-hidden">
 
+        {/* VIDEO */}
         <video
           autoPlay
           loop
@@ -85,6 +86,10 @@ export default function App() {
           <source src="https://res.cloudinary.com/dbfwgk9jq/video/upload/v1775446303/Luces-de-colores-para-fiestas-FONDO_a590hf.mp4" type="video/mp4" />
         </video>
 
+        {/* OVERLAY LUCES */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-80"></div>
+
+        {/* CONTENIDO */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full gap-6">
           <h1 className="text-7xl neon-text animate-pulse">BIRRIA</h1>
 
@@ -104,7 +109,7 @@ export default function App() {
           <div
             key={ev.id}
             onClick={() => setSelected(ev)}
-            className="cursor-pointer transform hover:scale-110 transition duration-300"
+            className="cursor-pointer transform hover:scale-110 hover:rotate-1 transition duration-300"
           >
             <img src={ev.image} className="rounded-xl mb-2" />
             <p className="font-bold">{ev.title}</p>
@@ -147,14 +152,16 @@ export default function App() {
             <p className="text-zinc-400">{selected.date}</p>
             <p className="mb-4">{selected.dj}</p>
 
+            {/* BOTÓN PRO VENTA */}
             <a
               href={createPaymentLink()}
               target="_blank"
-              className="block text-center bg-yellow-500 py-3 rounded-xl font-bold mb-3"
+              className="block text-center bg-gradient-to-r from-yellow-400 to-pink-500 animate-pulse py-3 rounded-xl font-bold mb-3"
             >
               Comprar Entrada
             </a>
 
+            {/* WHATSAPP */}
             <a
               href={`https://wa.me/5493415446431?text=Quiero reservar ${selected.title}`}
               target="_blank"
@@ -225,6 +232,7 @@ export default function App() {
         </div>
       )}
 
+      {/* NEON */}
       <style>{`
         .neon-text {
           color: #fff;
