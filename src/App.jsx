@@ -82,7 +82,7 @@ export default function App() {
           muted
           className="absolute w-full h-full object-cover opacity-40"
         >
-          <source src="https://res.cloudinary.com/demo/video/upload/v1620000000/nightclub.mp4" type="video/mp4" />
+          <source src="https://res.cloudinary.com/dbfwgk9jq/video/upload/v1775446303/Luces-de-colores-para-fiestas-FONDO_a590hf.mp4" type="video/mp4" />
         </video>
 
         <div className="relative z-10 flex flex-col items-center justify-center h-full gap-6">
