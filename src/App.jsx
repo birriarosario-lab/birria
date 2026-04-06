@@ -10,15 +10,18 @@ export default function App() {
   const [events, setEvents] = useState([]);
   const [selected, setSelected] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
 
   useEffect(() => {
     loadEvents();
 
-    if (window.location.pathname === "/admin") {
+    // 🔐 activar admin con ?admin
+    if (window.location.search.includes("admin")) {
       setIsAdmin(true);
     }
   }, []);
 
+  // 📥 cargar eventos
   const loadEvents = async () => {
     const { data } = await supabase
       .from("events")
@@ -28,6 +31,7 @@ export default function App() {
     setEvents(data || []);
   };
 
+  // 📤 subir flyers
   const handleDrop = async (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
@@ -60,24 +64,13 @@ export default function App() {
     loadEvents();
   };
 
+  // 🗑 borrar evento
   const deleteEvent = async (id) => {
     await supabase.from("events").delete().eq("id", id);
     loadEvents();
   };
 
-  const editEvent = async (event) => {
-    const title = prompt("Nuevo título", event.title);
-    const date = prompt("Nueva fecha", event.date);
-    const dj = prompt("Nuevo DJ", event.dj);
-
-    await supabase
-      .from("events")
-      .update({ title, date, dj })
-      .eq("id", event.id);
-
-    loadEvents();
-  };
-
+  // 💰 link de pago
   const createPaymentLink = () => {
     return "https://link.mercadopago.com.ar/ticketsbirria";
   };
@@ -109,7 +102,7 @@ export default function App() {
             {isAdmin && (
               <div className="flex gap-2 mt-2">
                 <button
-                  onClick={() => editEvent(ev)}
+                  onClick={() => setEditingEvent(ev)}
                   className="bg-blue-500 px-2 py-1 rounded"
                 >
                   Editar
@@ -127,7 +120,7 @@ export default function App() {
         ))}
       </section>
 
-      {/* MODAL */}
+      {/* MODAL EVENTO */}
       {selected && (
         <div
           className="fixed inset-0 bg-black/80 flex items-center justify-center"
@@ -162,6 +155,66 @@ export default function App() {
         </div>
       )}
 
+      {/* 🧠 PANEL EDITOR PRO */}
+      {editingEvent && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+          <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-md">
+            <h2 className="text-xl mb-4">Editar Evento</h2>
+
+            <input
+              className="w-full mb-2 p-2 bg-black border border-zinc-700 rounded"
+              value={editingEvent.title}
+              onChange={(e) =>
+                setEditingEvent({ ...editingEvent, title: e.target.value })
+              }
+            />
+
+            <input
+              className="w-full mb-2 p-2 bg-black border border-zinc-700 rounded"
+              value={editingEvent.date}
+              onChange={(e) =>
+                setEditingEvent({ ...editingEvent, date: e.target.value })
+              }
+            />
+
+            <input
+              className="w-full mb-4 p-2 bg-black border border-zinc-700 rounded"
+              value={editingEvent.dj}
+              onChange={(e) =>
+                setEditingEvent({ ...editingEvent, dj: e.target.value })
+              }
+            />
+
+            <button
+              onClick={async () => {
+                await supabase
+                  .from("events")
+                  .update({
+                    title: editingEvent.title,
+                    date: editingEvent.date,
+                    dj: editingEvent.dj,
+                  })
+                  .eq("id", editingEvent.id);
+
+                setEditingEvent(null);
+                loadEvents();
+              }}
+              className="bg-green-500 w-full py-2 rounded mb-2"
+            >
+              Guardar
+            </button>
+
+            <button
+              onClick={() => setEditingEvent(null)}
+              className="bg-zinc-700 w-full py-2 rounded"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* NEON */}
       <style>{`
         .neon-text {
           text-shadow: 0 0 10px #ff00ff, 0 0 30px #ff00ff;
